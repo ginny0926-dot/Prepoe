@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prepoe 網站快速上手：AI 影片製作教學</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Calm Harmony (Stone neutrals, muted Teal accent) -->
+    <!-- Application Structure Plan: The application is designed as an interactive step-by-step wizard or "stepper". This structure was chosen because the source material is a linear tutorial. A stepper UI intuitively guides the user through the sequence of actions, visually represents their progress, and breaks down the information into manageable chunks. This is more engaging and easier to follow than a simple vertical text document. Users navigate using "Next/Previous" buttons or by clicking the step indicators directly, making the learning process interactive and self-paced. -->
+    <!-- Visualization & Content Choices: Report Info: Entire tutorial process. -> Goal: Organize & Guide. -> Viz/Presentation Method: An interactive stepper UI with content cards for each step, and a final summary flowchart built with HTML/Tailwind. -> Interaction: Click-based navigation between steps, which dynamically shows/hides the relevant instruction card. -> Justification: This approach turns passive reading into an active learning experience, perfectly suited for a tutorial. The HTML-based flowchart for the summary avoids external libraries and SVG, providing a clear visual recap of the workflow. -> Library/Method: Vanilla JavaScript for state management and interaction, Tailwind CSS for styling. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .step-item.active .step-circle {
+            background-color: #0d9488;
+            border-color: #0d9488;
+            color: #ffffff;
+        }
+        .step-item.completed .step-circle {
+            background-color: #047857;
+            border-color: #047857;
+            color: #ffffff;
+        }
+        .step-connector {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #e5e7eb;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .step-item.completed ~ .step-connector, .step-item.active ~ .step-connector {
+            background-color: #e5e7eb;
+        }
+        .step-item.completed + .step-connector {
+            background-color: #047857;
+        }
+    </style>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        stone: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            800: '#292524',
+                        },
+                        teal: {
+                            600: '#0d9488',
+                            700: '#0f766e',
+                        },
+                        emerald: {
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-stone-50 text-stone-800 flex items-center justify-center min-h-screen p-4">
+    <main class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-10">
+        <header class="text-center mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold text-teal-700">Prepoe 網站快速上手</h1>
+            <p class="mt-2 text-lg text-stone-600">AI 影片製作互動教學</p>
+        </header>
+
+        <section id="stepper" class="w-full max-w-2xl mx-auto mb-10">
+            <div class="flex items-center justify-center relative">
+                <div class="step-item flex flex-col items-center cursor-pointer" data-step="0">
+                    <div class="step-circle w-10 h-10 rounded-full border-2 border-stone-300 bg-white flex items-center justify-center font-bold text-lg transition-all duration-300">1</div>
+                    <p class="text-sm mt-2 text-center">登入</p>
+                </div>
+                <div class="step-connector w-1/4 h-0.5 bg-stone-300"></div>
+                <div class="step-item flex flex-col items-center cursor-pointer" data-step="1">
+                    <div class="step-circle w-10 h-10 rounded-full border-2 border-stone-300 bg-white flex items-center justify-center font-bold text-lg transition-all duration-300">2</div>
+                    <p class="text-sm mt-2 text-center">AI 創作</p>
+                </div>
+                <div class="step-connector w-1/4 h-0.5 bg-stone-300"></div>
+                <div class="step-item flex flex-col items-center cursor-pointer" data-step="2">
+                    <div class="step-circle w-10 h-10 rounded-full border-2 border-stone-300 bg-white flex items-center justify-center font-bold text-lg transition-all duration-300">3</div>
+                    <p class="text-sm mt-2 text-center">音頻</p>
+                </div>
+                <div class="step-connector w-1/4 h-0.5 bg-stone-300"></div>
+                <div class="step-item flex flex-col items-center cursor-pointer" data-step="3">
+                    <div class="step-circle w-10 h-10 rounded-full border-2 border-stone-300 bg-white flex items-center justify-center font-bold text-lg transition-all duration-300">4</div>
+                    <p class="text-sm mt-2 text-center">影片</p>
+                </div>
+                 <div class="step-connector w-1/4 h-0.5 bg-stone-300"></div>
+                <div class="step-item flex flex-col items-center cursor-pointer" data-step="4">
+                    <div class="step-circle w-10 h-10 rounded-full border-2 border-stone-300 bg-white flex items-center justify-center font-bold text-lg transition-all duration-300">✓</div>
+                    <p class="text-sm mt-2 text-center">總結</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="content-panels" class="relative">
+            <div class="step-panel" data-panel="0">
+                <div class="bg-stone-100 p-8 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4 flex items-center"><span class="text-teal-600 mr-3 text-2xl">①</span>第一步：登入 Prepoe</h2>
+                    <p class="mb-4">首先，請前往 Prepoe 網站。進入網站後，點擊「開始使用」並選擇使用您的 LINE 帳號登入，非常方便。</p>
+                    <ol class="list-decimal list-inside space-y-2 mb-6">
+                        <li>前往網站：<a href="https://prepoe.flashfalcon.info/provider/creator" target="_blank" class="text-teal-700 font-semibold hover:underline">https://prepoe.flashfalcon.info</a></li>
+                        <li>點擊「開始使用」。</li>
+                        <li>選擇「使用 LINE 登入」。</li>
+                    </ol>
+                    <div class="p-4 bg-teal-50 border-l-4 border-teal-500 text-teal-800 rounded-r-lg">
+                        <p><span class="font-bold">提示：</span>使用 LINE 登入是最快速的方式，不需另外註冊帳號。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="step-panel hidden" data-panel="1">
+                <div class="bg-stone-100 p-8 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4 flex items-center"><span class="text-teal-600 mr-3 text-2xl">②</span>第二步：選擇「AI 創作」功能</h2>
+                    <p class="mb-4">成功登入後，您會看到系統的後台主畫面。請在左側的功能選單中，找到並點擊閃亮的「✨ AI 創作」選項，開始您的創作之旅。</p>
+                     <div class="p-4 bg-stone-200 border-stone-400 border rounded-lg text-center">
+                        <p class="text-3xl mb-2">✨</p>
+                        <p class="font-semibold text-stone-700">點擊「AI 創作」</p>
+                     </div>
+                </div>
+            </div>
+            <div class="step-panel hidden" data-panel="2">
+                <div class="bg-stone-100 p-8 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4 flex items-center"><span class="text-teal-600 mr-3 text-2xl">③</span>第三步：音頻創作 (選用)</h2>
+                    <p class="mb-4">如果您希望影片有旁白或對話，可以先製作音檔。這個步驟是選用的，您也可以直接跳到影片創作並使用背景音樂。</p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-lg border">
+                            <h3 class="font-semibold mb-2">🎤 單人/多人模式</h3>
+                            <p class="text-sm">您可以選擇只生成一個人的聲音，或是建立像廣播劇一樣的多人對話。</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border">
+                            <h3 class="font-semibold mb-2">🗣️ 錄製自己的聲音</h3>
+                            <p class="text-sm">最方便的一點是，您可以錄製或上傳自己的聲音，讓影片更有個人特色！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="step-panel hidden" data-panel="3">
+                <div class="bg-stone-100 p-8 rounded-lg">
+                    <h2 class="text-xl font-bold mb-4 flex items-center"><span class="text-teal-600 mr-3 text-2xl">④</span>第四步：影片創作</h2>
+                    <p class="mb-6">透過指示錄製好聲音後，就可以開始製作影片了！回到 AI 創作頁面，選擇右邊的「影片創作」。</p>
+                    <div class="space-y-4">
+                        <div class="flex items-start p-3 bg-white rounded-lg border">
+                           <span class="text-2xl mr-4">🖼️</span>
+                           <div>
+                                <h3 class="font-semibold">上傳圖片</h3>
+                                <p class="text-sm">把您想要放在影片中的照片上傳。</p>
+                           </div>
+                        </div>
+                         <div class="flex items-start p-3 bg-white rounded-lg border">
+                           <span class="text-2xl mr-4">🔊</span>
+                           <div>
+                                <h3 class="font-semibold">搭配語音</h3>
+                                <p class="text-sm">選擇您剛剛在「音頻創作」製作好的聲音檔。</p>
+                           </div>
+                        </div>
+                         <div class="flex items-start p-3 bg-white rounded-lg border">
+                           <span class="text-2xl mr-4">🚀</span>
+                           <div>
+                                <h3 class="font-semibold">一鍵生成</h3>
+                                <p class="text-sm">點擊按鈕，系統就會自動將圖片和聲音結合！</p>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="step-panel hidden" data-panel="4">
+                <div class="bg-stone-100 p-8 rounded-lg text-center">
+                    <h2 class="text-xl font-bold mb-6">總結一下流程</h2>
+                    <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 text-sm font-medium">
+                        <div class="bg-white py-2 px-4 rounded-full shadow-md">登入</div>
+                        <div class="text-stone-400 text-2xl">→</div>
+                        <div class="bg-white py-2 px-4 rounded-full shadow-md">進入 AI 創作</div>
+                        <div class="text-stone-400 text-2xl">→</div>
+                        <div class="bg-white py-2 px-4 rounded-full shadow-md border-2 border-dashed border-stone-300 text-stone-500">(可選) 製作音頻</div>
+                        <div class="text-stone-400 text-2xl">→</div>
+                        <div class="bg-teal-600 text-white py-2 px-4 rounded-full shadow-lg">上傳照片生成影片</div>
+                    </div>
+                    <p class="mt-8 text-stone-600">這個工具非常直覺，希望能幫助您快速上手，輕鬆創作影片！</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-10 flex justify-between items-center">
+            <button id="prevBtn" class="bg-stone-200 text-stone-700 font-bold py-2 px-6 rounded-lg hover:bg-stone-300 transition-all duration-300 invisible">上一步</button>
+            <button id="nextBtn" class="bg-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-teal-700 transition-all duration-300">下一步</button>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stepItems = document.querySelectorAll('.step-item');
+            const panels = document.querySelectorAll('.step-panel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const connectors = document.querySelectorAll('.step-connector');
+
+            let currentStep = 0;
+            const totalSteps = stepItems.length;
+
+            const updateUI = () => {
+                stepItems.forEach((item, index) => {
+                    item.classList.remove('active', 'completed');
+                    const circle = item.querySelector('.step-circle');
+
+                    if (index < currentStep) {
+                        item.classList.add('completed');
+                        circle.innerHTML = '&#10003;';
+                    } else if (index === currentStep) {
+                        item.classList.add('active');
+                        if (index === totalSteps - 1) {
+                            circle.innerHTML = '&#10003;';
+                        } else {
+                            circle.innerText = index + 1;
+                        }
+                    } else {
+                         if (index === totalSteps - 1) {
+                            circle.innerHTML = '&#10003;';
+                        } else {
+                            circle.innerText = index + 1;
+                        }
+                    }
+                });
+                
+                connectors.forEach((connector, index) => {
+                    if (index < currentStep) {
+                        connector.style.backgroundColor = '#047857';
+                    } else {
+                        connector.style.backgroundColor = '#e5e7eb';
+                    }
+                });
+
+                panels.forEach(panel => {
+                    panel.classList.add('hidden');
+                });
+                panels[currentStep].classList.remove('hidden');
+
+                prevBtn.classList.toggle('invisible', currentStep === 0);
+                nextBtn.classList.toggle('invisible', currentStep === totalSteps - 1);
+            };
+            
+            const goToStep = (step) => {
+                currentStep = Math.max(0, Math.min(step, totalSteps - 1));
+                updateUI();
+            };
+
+            nextBtn.addEventListener('click', () => {
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    updateUI();
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateUI();
+                }
+            });
+            
+            stepItems.forEach(item => {
+                item.addEventListener('click', () => {
+                   const stepIndex = parseInt(item.dataset.step, 10);
+                   goToStep(stepIndex);
+                });
+            });
+
+            updateUI();
+        });
+    </script>
+</body>
+</html>
